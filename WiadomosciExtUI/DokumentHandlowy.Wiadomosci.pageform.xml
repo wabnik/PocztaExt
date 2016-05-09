@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<DataForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          RightName="Page:WiadomosciPage" xmlns="http://www.enova.pl/schema/form.xsd"
+          DataType="Soneta.Handel.DokumentHandlowy,Soneta.Handel">
+  <Page Name="DokumentPunktyPage" CaptionHtml="Wiadomosci" DataContext="{DataSource}">
+    <Group CaptionHtml="Wiadomosci email dla dokumentu" LabelWidth="26">
+      <Grid Width="*" Height="*" EditValue="{Workers.WiadomosciDokumentu.Wiadomosci}" IsToolbarVisible="true" EditInPlace="true" NewInPlace="true" OrderBy="ID">
+        <Field CaptionHtml="Wiadomość email" Width="23" EditValue="{Wiadomosc.Title}" Footer="None" />
+      </Grid>
+ 
+    </Group>
+  </Page>
+</DataForm>

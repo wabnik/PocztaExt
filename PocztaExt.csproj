@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E360D866-7C2A-46EB-9032-376BB4D7BEBC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Soneta.Examples.PocztaExt</RootNamespace>
+    <AssemblyName>Soneta.Examples.PocztaExt</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>c:\Program Files\Common Files\Soneta\Assemblies\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\..\Program Files %28x86%29\Common Files\Soneta\Assemblies\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Soneta.Business">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Soneta.Core">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Soneta.CRM, Version=11.3.5969.22928, Culture=neutral, PublicKeyToken=a19fc6236fd34393, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Soneta\enova365 11.3.5969\Soneta.CRM.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Soneta.Handel">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Soneta.Kasa, Version=11.3.5969.22919, Culture=neutral, PublicKeyToken=a19fc6236fd34393, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Soneta\enova365 11.3.5969\Soneta.Kasa.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Soneta.Types">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PocztaExt.business.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PocztaExt.business.xml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WiadomosciExt\WiadomoscExt.cs" />
+    <Compile Include="WiadomosciExt\WiadomosciDokumentuWorker.cs" />
+    <Compile Include="WiadomosciExt\WiadomosciExt.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Generator\Analysis.business.xml" />
+    <Content Include="Generator\Biegli.business.xml" />
+    <Content Include="Generator\Business.business.xml" />
+    <Content Include="Generator\Core.business.xml" />
+    <Content Include="Generator\CRM.business.xml" />
+    <Content Include="Generator\CzlonkowieSzkolenia.business.xml" />
+    <Content Include="Generator\Deklaracje.business.xml" />
+    <Content Include="Generator\Delegacje.business.xml" />
+    <Content Include="Generator\EwidencjaVat.business.xml" />
+    <Content Include="Generator\Handel.business.xml" />
+    <Content Include="Generator\HR.business.xml" />
+    <Content Include="Generator\Import.business.xml" />
+    <Content Include="Generator\Kadry.business.xml" />
+    <Content Include="Generator\Kalend.business.xml" />
+    <Content Include="Generator\Kasa.business.xml" />
+    <Content Include="Generator\Ksiega.business.xml" />
+    <Content Include="Generator\Magazyny.business.xml" />
+    <Content Include="Generator\Oceny.business.xml" />
+    <Content Include="Generator\Place.business.xml" />
+    <Content Include="Generator\Produkcja.business.xml" />
+    <Content Include="Generator\Przeszeregowania.business.xml" />
+    <Content Include="PocztaExt.business.xml">
+      <Generator>BusinessGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>PocztaExt.business.cs</LastGenOutput>
+    </Content>
+    <Content Include="Generator\RMK.business.xml" />
+    <Content Include="Generator\Samochodowka.business.xml" />
+    <Content Include="Generator\Snapshots.business.xml" />
+    <Content Include="Generator\SrodkiTrwale.business.xml" />
+    <Content Include="Generator\Towary.business.xml" />
+    <Content Include="Generator\Waluty.business.xml" />
+    <Content Include="Generator\WebAuthorization.business.xml" />
+    <Content Include="Generator\Windykacja.business.xml" />
+    <Content Include="Generator\Workflow.business.xml" />
+    <Content Include="Generator\Zadania.business.xml" />
+    <Content Include="Soneta.Generator.exe" />
+    <EmbeddedResource Include="WiadomosciExtUI\DokumentHandlowy.Wiadomosci.pageform.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Generator\Business.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Generator\Business.xsx">
+      <DependentUpon>Business.xsd</DependentUpon>
+    </None>
+    <None Include="Generator\Config.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Generator\Config.xsx">
+      <DependentUpon>Config.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
