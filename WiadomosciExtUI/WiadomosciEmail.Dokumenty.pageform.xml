@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+<DataForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          RightName="Page:DokumentyPage" xmlns="http://www.enova.pl/schema/form.xsd"
+          DataType="Soneta.CRM.WiadomoscEmail,Soneta.CRM">
+  <Page Name="WiadomoscEmailDokumentyPage" CaptionHtml="Dokumenty" DataContext="{DataSource}">
+    <Group CaptionHtml="Dokumenty powiązane z wiadomością email" LabelWidth="26">
+      <Grid Width="*" Height="*" EditValue="{Workers.DokumentyWiadomosci.Dokumenty}" IsToolbarVisible="true"  OrderBy="ID">
+        <Field CaptionHtml="Dokument" Width="23" EditValue="{Dokument.Numer}" Footer="None" />
+      </Grid>
+    </Group>
+  </Page>
+</DataForm>

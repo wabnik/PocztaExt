@@ -63,6 +63,8 @@
       <DependentUpon>PocztaExt.business.xml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WiadomosciExt\DodajWiadomoscWorker.cs" />
+    <Compile Include="WiadomosciExt\DokumentyWiadomosciWorker.cs" />
     <Compile Include="WiadomosciExt\WiadomoscExt.cs" />
     <Compile Include="WiadomosciExt\WiadomosciDokumentuWorker.cs" />
     <Compile Include="WiadomosciExt\WiadomosciExt.cs" />
@@ -105,6 +107,7 @@
     <Content Include="Generator\Workflow.business.xml" />
     <Content Include="Generator\Zadania.business.xml" />
     <Content Include="Soneta.Generator.exe" />
+    <EmbeddedResource Include="WiadomosciExtUI\WiadomosciEmail.Dokumenty.pageform.xml" />
     <EmbeddedResource Include="WiadomosciExtUI\DokumentHandlowy.Wiadomosci.pageform.xml" />
   </ItemGroup>
   <ItemGroup>
