@@ -13,6 +13,8 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt
     {
         static WiadomosciExt()
         {
+
+          //  HandelModule.DokumentHandlowySchema.AddStanAfterEdit(PrzeliczanieDniHelper.Przelicz);
         }
     }
 }

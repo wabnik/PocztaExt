@@ -70,12 +70,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WiadomosciExt\DodajWiadomoscWorker.cs" />
     <Compile Include="WiadomosciExt\DokumentyWiadomosciWorker.cs" />
+    <Compile Include="WiadomosciExt\PrzeliczanieDniHelper.cs" />
     <Compile Include="WiadomosciExt\WiadomoscExt.cs" />
     <Compile Include="WiadomosciExt\WiadomosciDokumentuWorker.cs" />
     <Compile Include="WiadomosciExt\WiadomosciExt.cs" />
     <Compile Include="WiadomosciExt\WydrukiWiad.cs" />
     <Compile Include="WiadomosciExt\WydrukWiadomosci.cs" />
     <Compile Include="WiadomosciExt\WyslijDokumentWorker.cs" />
+    <Compile Include="WiadomosciExt\ZatwierdzenieFVService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Generator\Analysis.business.xml" />
