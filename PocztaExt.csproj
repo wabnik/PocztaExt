@@ -52,6 +52,11 @@
     <Reference Include="Soneta.Types">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Soneta.Zadania, Version=11.3.5969.22938, Culture=neutral, PublicKeyToken=a19fc6236fd34393, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Soneta\enova365 11.3.5969\Soneta.Zadania.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -68,6 +73,7 @@
     <Compile Include="WiadomosciExt\WiadomoscExt.cs" />
     <Compile Include="WiadomosciExt\WiadomosciDokumentuWorker.cs" />
     <Compile Include="WiadomosciExt\WiadomosciExt.cs" />
+    <Compile Include="WiadomosciExt\WyslijDokumentWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Generator\Analysis.business.xml" />
@@ -107,7 +113,9 @@
     <Content Include="Generator\Workflow.business.xml" />
     <Content Include="Generator\Zadania.business.xml" />
     <Content Include="Soneta.Generator.exe" />
-    <EmbeddedResource Include="WiadomosciExtUI\WiadomosciEmail.Dokumenty.pageform.xml" />
+    <EmbeddedResource Include="WiadomosciExtUI\WiadomosciEmail.Dokumenty.pageform.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="WiadomosciExtUI\DokumentHandlowy.Wiadomosci.pageform.xml" />
   </ItemGroup>
   <ItemGroup>

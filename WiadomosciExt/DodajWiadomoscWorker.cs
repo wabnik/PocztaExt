@@ -7,6 +7,7 @@ using Soneta.Business.Licence;
 using Soneta.Core;
 using Soneta.CRM;
 using Soneta.Commands;
+using Soneta.Zadania;
 
 [assembly: Worker(
     typeof(DodajWiadomoscWorker),
@@ -36,6 +37,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt
                     if (Dokument.Kontrahent.EMAIL != null) Wiadomosc.Do = Dokument.Kontrahent.EMAIL;
 
                 }
+                Wiadomosc.KontoPocztowe = Soneta.Zadania.ZadaniaModule.GetInstance(Dokument).Config.Operatorzy[Dokument.Session.Login.Operator].DomyslneKontoPocztowe;
 
                 var WiadomoscDokumentu = new WiadomoscExt(Wiadomosc, Dokument);
                 PocztaExtModule.GetInstance(Dokument).WiadomosciExt.AddRow(WiadomoscDokumentu);
