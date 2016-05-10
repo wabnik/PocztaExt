@@ -10,20 +10,10 @@ using Soneta.Examples.PocztaExt.WiadomosciExt;
 
 [assembly: NewRow(typeof(WiadomoscExt))]
 
-//
-// Wszystkie obiekty biznesowe zostały umieszczone w jednym namespace, którego nazwa została również 
-// umieszczona w pliku *.business.xml (module/@namespace).
-//
+
 namespace Soneta.Examples.PocztaExt.WiadomosciExt
 {
-
-    //
-    // Nazwa klasy obiektu biznesowego brana jest z nazwy elementu table znajdującego się w 
-    // *.business.xml (atrybut table/@name).
-    // Klasa ta musi dziedziczyć z klasy bazowej znajdującej się w wygenerowanym przez Soneta.Generator module
-    // PunktacjaModule i klasy PunktRow (dodano sufiks Row).
-    // W klasie tej znajduje się między innymi implementacja properties biznesowych pochodzących z bazy danych.
-    //
+ 
     public class WiadomoscExt : PocztaExtModule.WiadomoscExtRow
     {
 

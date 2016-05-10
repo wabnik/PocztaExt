@@ -27,7 +27,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt
         public Context cx { get; set; }
 
         string reportname = "";
-        string defaultreport = "handel/sprzedaz.aspx";
+        string defaultreport = "";
 
         public string ReportName
         {
@@ -41,6 +41,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt
         {
             get
             {
+                if (defaultreport == "") defaultreport = PocztaExtModule.GetInstance(Dokument).WydrukiWiad.WgDefinicjaOperator[Dokument.Definicja, Dokument.Session.Login.Operator].Wzorzec;
                 return defaultreport;
             }
         }

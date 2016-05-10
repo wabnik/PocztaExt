@@ -15,9 +15,10 @@ using Soneta.Types;
 using Soneta.Business;
 using Soneta.Handel;
 using Soneta.CRM;
+using Soneta.Business.App;
 using Soneta.Examples.PocztaExt.WiadomosciExt;
 
-[assembly: ModuleType("PocztaExt", typeof(Soneta.Examples.PocztaExt.WiadomosciExt.PocztaExtModule), 2, "WiadomosciExt", 1, VersionNumber=1)]
+[assembly: ModuleType("PocztaExt", typeof(Soneta.Examples.PocztaExt.WiadomosciExt.PocztaExtModule), 2, "WiadomosciExt", 2, VersionNumber=2)]
 
 namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 
@@ -25,6 +26,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 	/// Moduł PocztaExt.
 	/// <seealso cref="Soneta.Handel"/>
 	/// <seealso cref="Soneta.CRM"/>
+	/// <seealso cref="Soneta.Business.App"/>
 	/// </summary>
 	/// <seealso cref="Soneta.Business.Module"/>
 	/// <seealso cref="Soneta.Business.Session"/>
@@ -42,6 +44,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 		/// <param name="session">Sesja w której jest tworzony ten moduł.</param>
 		public PocztaExtModule(Session session) : base(session, "PocztaExt") {
 			AddTable(tableWiadomoscExt);
+			AddTable(tableWydrukWiadomosci);
 			Initialize();
 		}
 
@@ -243,12 +246,14 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 				names.Append(divider); names.Append("Guid");
 				names.Append(divider); names.Append("Wiadomosc");
 				names.Append(divider); names.Append("Dokument");
+				names.Append(divider); names.Append("CzasRealizacji");
 			}
 
 			protected override sealed void PrepareTypes(System.Collections.Generic.List<Type> types) {
 				types.Add(typeof(Guid));
 				types.Add(typeof(Row));
 				types.Add(typeof(Row));
+				types.Add(typeof(int));
 			}
 
 		}
@@ -300,6 +305,24 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 					DokumentHandlowy row = (DokumentHandlowy)record.Dokument.Root;
 					record.Dokument = row;
 					return row;
+				}
+			}
+
+			[Description("Dni oczekiwania do sprzedaży")]
+			[Category("Ogólne")]
+			[Caption("CzasRealizacji")]
+			public int CzasRealizacji {
+				get {
+					if (record==null) GetRecord();
+					return record.CzasRealizacji;
+				}
+				set {
+					if (WiadomoscExtSchema.CzasRealizacjiBeforeEdit!=null)
+						WiadomoscExtSchema.CzasRealizacjiBeforeEdit((WiadomoscExt)this, ref value);
+					GetEdit(record==null, false);
+					record.CzasRealizacji = value;
+					if (WiadomoscExtSchema.CzasRealizacjiAfterEdit!=null)
+						WiadomoscExtSchema.CzasRealizacjiAfterEdit((WiadomoscExt)this);
 				}
 			}
 
@@ -377,6 +400,7 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 			[Required]
 			[ParentTable("DokumentHandlowy")]
 			public IRow Dokument;
+			public int CzasRealizacji;
 
 			public override Record Clone() {
 				WiadomoscExtRecord rec = (WiadomoscExtRecord)MemberwiseClone();
@@ -388,10 +412,21 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 				Guid = creator.Load_guid(1);
 				Wiadomosc = creator.Load_Row(2, "WiadomosciEmail");
 				Dokument = creator.Load_Row(3, "DokHandlowe");
+				CzasRealizacji = creator.Load_int(4);
 			}
 		}
 
 		public static class WiadomoscExtSchema {
+
+			internal static RowDelegate<WiadomoscExtRow, int> CzasRealizacjiBeforeEdit;
+			public static void AddCzasRealizacjiBeforeEdit(RowDelegate<WiadomoscExtRow, int> value) {
+				CzasRealizacjiBeforeEdit = (RowDelegate<WiadomoscExtRow, int>)Delegate.Combine(CzasRealizacjiBeforeEdit, value);
+			}
+
+			internal static RowDelegate<WiadomoscExtRow> CzasRealizacjiAfterEdit;
+			public static void AddCzasRealizacjiAfterEdit(RowDelegate<WiadomoscExtRow> value) {
+				CzasRealizacjiAfterEdit = (RowDelegate<WiadomoscExtRow>)Delegate.Combine(CzasRealizacjiAfterEdit, value);
+			}
 
 			internal static RowDelegate<WiadomoscExtRow> OnLoaded;
 			public static void AddOnLoaded(RowDelegate<WiadomoscExtRow> value) {
@@ -426,6 +461,404 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt {
 			internal static RowAccessRightsDelegate<WiadomoscExtRow> OnCalcParentsObjectRight;
 			public static void AddOnCalcParentsObjectRight(RowAccessRightsDelegate<WiadomoscExtRow> value) {
 				OnCalcParentsObjectRight = (RowAccessRightsDelegate<WiadomoscExtRow>)Delegate.Combine(OnCalcParentsObjectRight, value);
+			}
+
+		}
+
+		static int handleWydrukiWiad = 0;
+
+		private WydrukiWiad tableWydrukWiadomosci = new WydrukiWiad();
+		/// <summary>
+		/// Tabela WydrukWiadomosci.
+		/// </summary>
+		public WydrukiWiad WydrukiWiad {
+			get { return tableWydrukWiadomosci; } 
+		}
+
+		/// <summary>
+		/// Klasa implementująca standardową obsługę tabeli obiektów WydrukWiadomosci.
+		/// Dziedzicząca klasa <see cref="WydrukiWiad"/> zawiera kod użytkownika
+		/// zawierający specyficzną funkcjonalność tabeli, która nie zawiera się w funkcjonalności
+		/// biblioteki <see cref="Soneta.Business"/>.
+		/// </summary>
+		/// <seealso cref="WydrukiWiad"/>
+		/// <seealso cref="WydrukWiadomosciRow"/>
+		/// <seealso cref="WydrukWiadomosci"/>
+		/// <seealso cref="Soneta.Business.Table"/>
+		[TableName("WydrukWiadomosci", "WydrukWi", "WydrukiWiad", typeof(WydrukWiadomosci))]
+		public abstract partial class WydrukWiadomosciTable : GuidedTable {
+
+			protected WydrukWiadomosciTable() : base(false, false) {
+			}
+
+			public class DefinicjaRelation : SimpleRelation {
+				protected override object [] GetData(Row row, Record rec) {
+					return new object[] {
+						((WydrukWiadomosciRecord)rec).Definicja,
+						row.ID};
+				}
+				public DefinicjaRelation(WydrukWiadomosciTable table) {
+					Table = table;
+					ParentName = "DefDokHandlowego";
+					ChildColumn = "Definicja";
+					InitFields("Definicja", "ID");
+					table.Session.Keys.Add(this);
+				}
+
+				public SubTable this[DefDokHandlowego definicja] {
+					get {
+						return new SubTable(this, definicja);
+					}
+				}
+			}
+
+			DefinicjaRelation relationDefinicja;
+
+			public DefinicjaRelation WgDefinicja {
+				get { return relationDefinicja; } 
+			}
+
+			public class OperatorRelation : SimpleRelation {
+				protected override object [] GetData(Row row, Record rec) {
+					return new object[] {
+						((WydrukWiadomosciRecord)rec).Operator,
+						row.ID};
+				}
+				public OperatorRelation(WydrukWiadomosciTable table) {
+					Table = table;
+					ParentName = "Operator";
+					ChildColumn = "Operator";
+					InitFields("Operator", "ID");
+					table.Session.Keys.Add(this);
+				}
+
+				public SubTable this[Operator _operator] {
+					get {
+						return new SubTable(this, _operator);
+					}
+				}
+			}
+
+			OperatorRelation relationOperator;
+
+			public OperatorRelation WgOperator {
+				get { return relationOperator; } 
+			}
+
+			public class WgDefinicjaOperatorKey : Key {
+				protected override object [] GetData(Row row, Record rec) {
+					return new object[] {
+						((WydrukWiadomosciRecord)rec).Definicja,
+						((WydrukWiadomosciRecord)rec).Operator};
+				}
+				public WgDefinicjaOperatorKey(WydrukWiadomosciTable table) {
+					Table = table;
+					Name = "WgDefinicjaOperator";
+					Unique = true;
+					InitFields("Definicja", "Operator");
+					table.Session.Keys.Add(this);
+				}
+
+				public SubTable this[DefDokHandlowego definicja] {
+					get {
+						return new SubTable(this, definicja);
+					}
+				}
+
+				public WydrukWiadomosci this[DefDokHandlowego definicja, Operator _operator] {
+					get {
+						return (WydrukWiadomosci)Find(definicja, _operator);
+					}
+				}
+			}
+
+			WgDefinicjaOperatorKey keyWgDefinicjaOperator;
+
+			public WgDefinicjaOperatorKey WgDefinicjaOperator {
+				get { return keyWgDefinicjaOperator; } 
+			}
+
+
+			protected override void LoadChildRelations() {
+			}
+
+			/// <summary>
+			/// Typowane property dostarczające obiekt modułu zawierającegą tą tabelę. Umożliwia dostęp do
+			/// innych obiektów znajdujących się w tym samym module.
+			/// </summary>
+			/// <seealso cref="PocztaExtModule"/>
+			public new PocztaExtModule Module {
+				get { return (PocztaExtModule)base.Module; } 
+			}
+
+			/// <summary>
+			/// Typowany indekser dostarczający obiekty znajdujące się w tej tabeli przy pomocy 
+			/// ID identyfikującego jednoznacznie obiekt w systemie.
+			/// </summary>
+			/// <param name="id">Liczba będąca unikalnym identyfikatorem obiektu. Wartości
+			/// ujemne identyfikują obiekty, które zostały dodane i nie są jeszcze zapisane do bazy danych.</param>
+			/// <seealso cref="WydrukWiadomosci"/>
+			public new WydrukWiadomosci this[int id] {
+				get { return (WydrukWiadomosci)base[id]; } 
+			}
+
+			public new WydrukWiadomosci this[Guid guid] {
+				get { return (WydrukWiadomosci)base[guid]; } 
+			}
+
+			protected override void Adding(Module module) {
+				base.Adding(module);
+				relationDefinicja = new DefinicjaRelation(this);
+				relationOperator = new OperatorRelation(this);
+				keyWgDefinicjaOperator = new WgDefinicjaOperatorKey(this);
+				SetPrimaryKey(keyWgDefinicjaOperator);
+			}
+
+			protected override Record CreateRecord() {
+				return new WydrukWiadomosciRecord();
+			}
+
+			protected override Row CreateRow(RowCreator creator) {
+				return new WydrukWiadomosci(creator);
+			}
+
+			/// <summary>
+			/// Metoda zwracająca typ wierszy znajdujących się w tej tabeli.
+			/// </summary>
+			/// <returns>Metoda zwraca zawsze wartość typeof(WydrukWiadomosci).</returns>
+			/// <seealso cref="WydrukWiadomosci"/>
+			public override Type GetRowType() {
+				return typeof(WydrukWiadomosci);
+			}
+
+			protected override sealed int GetTableHandle() {
+				return handleWydrukiWiad;
+			}
+
+			protected override sealed void PrepareNames(StringBuilder names, string divider, bool prepareTextFields) {
+				names.Append(divider); names.Append("Guid");
+				names.Append(divider); names.Append("Definicja");
+				names.Append(divider); names.Append("Operator");
+				names.Append(divider); names.Append("Wzorzec");
+			}
+
+			protected override sealed void PrepareTypes(System.Collections.Generic.List<Type> types) {
+				types.Add(typeof(Guid));
+				types.Add(typeof(Row));
+				types.Add(typeof(Row));
+				types.Add(typeof(string));
+			}
+
+		}
+
+		[RecordType(typeof(WydrukWiadomosciRecord))]
+		[Caption("Definicja wydruków pod wysyłkę wiadomosci")]
+		public abstract partial class WydrukWiadomosciRow : GuidedRow {
+
+			private WydrukWiadomosciRecord record = null;
+
+
+			protected override void AssignRecord(Record rec) {
+				record = (WydrukWiadomosciRecord)rec;
+			}
+
+			protected WydrukWiadomosciRow(RowCreator creator) : base(false) {
+			}
+
+			protected WydrukWiadomosciRow([Required] DefDokHandlowego definicja, [Required] Operator _operator) : base(true) {
+				if (definicja==null) throw new RequiredException(this, "Definicja");
+				if (_operator==null) throw new RequiredException(this, "Operator");
+				GetRecord();
+				record.Definicja = definicja;
+				record.Operator = _operator;
+			}
+
+			[Description("Definicja dok han")]
+			[Category("Ogólne")]
+			[Caption("Definicja")]
+			[Required]
+			public DefDokHandlowego Definicja {
+				get {
+					if (record==null) GetRecord();
+					if (record.Definicja==null) return null;
+					DefDokHandlowego row = (DefDokHandlowego)record.Definicja.Root;
+					record.Definicja = row;
+					return row;
+				}
+			}
+
+			[Description("Operator.")]
+			[Category("Ogólne")]
+			[Caption("Operator")]
+			[Required]
+			public Operator Operator {
+				get {
+					if (record==null) GetRecord();
+					if (record.Operator==null) return null;
+					Operator row = (Operator)record.Operator.Root;
+					record.Operator = row;
+					return row;
+				}
+			}
+
+			[Description("Wzorzec wydruku")]
+			[Category("Ogólne")]
+			[MaxLength(255)]
+			public string Wzorzec {
+				get {
+					if (record==null) GetRecord();
+					return record.Wzorzec;
+				}
+				set {
+					if (WydrukWiadomosciSchema.WzorzecBeforeEdit!=null)
+						WydrukWiadomosciSchema.WzorzecBeforeEdit((WydrukWiadomosci)this, ref value);
+					if (value!=null) value = value.TrimEnd();
+					if (value.Length>WzorzecLength) throw new ValueToLongException(this, "Wzorzec", WzorzecLength);
+					GetEdit(record==null, false);
+					record.Wzorzec = value;
+					if (WydrukWiadomosciSchema.WzorzecAfterEdit!=null)
+						WydrukWiadomosciSchema.WzorzecAfterEdit((WydrukWiadomosci)this);
+				}
+			}
+
+			public const int WzorzecLength = 255;
+
+			[Browsable(false)]
+			public new WydrukiWiad Table {
+				get { return (WydrukiWiad)base.Table; }
+			}
+
+			[Browsable(false)]
+			public PocztaExtModule Module {
+				get { return Table.Module; }
+			}
+
+			protected override sealed int GetTableHandle() {
+				return handleWydrukiWiad;
+			}
+
+			protected override Record CreateRecord() {
+				return new WydrukWiadomosciRecord();
+			}
+
+			public sealed override AccessRights GetObjectRight() {
+				AccessRights ar = CalcObjectRight();
+				if (WydrukWiadomosciSchema.OnCalcObjectRight!=null)
+					WydrukWiadomosciSchema.OnCalcObjectRight((WydrukWiadomosci)this, ref ar);
+				return ar;
+			}
+
+			protected sealed override AccessRights GetParentsObjectRight() {
+				AccessRights result = CalcParentsObjectRight();
+				if (WydrukWiadomosciSchema.OnCalcParentsObjectRight!=null)
+					WydrukWiadomosciSchema.OnCalcParentsObjectRight((WydrukWiadomosci)this, ref result);
+				return result;
+			}
+
+			protected override void OnAdded() {
+				base.OnAdded();
+				System.Diagnostics.Debug.Assert(record.Definicja==null || record.Definicja.State==RowState.Detached || Session==record.Definicja.Session);
+				System.Diagnostics.Debug.Assert(record.Operator==null || record.Operator.State==RowState.Detached || Session==record.Operator.Session);
+				if (WydrukWiadomosciSchema.OnAdded!=null)
+					WydrukWiadomosciSchema.OnAdded((WydrukWiadomosci)this);
+			}
+
+			protected override void OnLoaded() {
+				base.OnLoaded();
+				if (WydrukWiadomosciSchema.OnLoaded!=null)
+					WydrukWiadomosciSchema.OnLoaded((WydrukWiadomosci)this);
+			}
+
+			protected override void OnEditing() {
+				base.OnEditing();
+				if (WydrukWiadomosciSchema.OnEditing!=null)
+					WydrukWiadomosciSchema.OnEditing((WydrukWiadomosci)this);
+			}
+
+			protected override void OnDeleting() {
+				base.OnDeleting();
+				if (WydrukWiadomosciSchema.OnDeleting!=null)
+					WydrukWiadomosciSchema.OnDeleting((WydrukWiadomosci)this);
+			}
+
+			protected override void OnDeleted() {
+				base.OnDeleted();
+				if (WydrukWiadomosciSchema.OnDeleted!=null)
+					WydrukWiadomosciSchema.OnDeleted((WydrukWiadomosci)this);
+			}
+
+		}
+
+		[ParentTable("WydrukWiadomosci")]
+		public sealed class WydrukWiadomosciRecord : GuidedRecord {
+			[Required]
+			[ParentTable("DefDokHandlowego")]
+			public IRow Definicja;
+			[Required]
+			[ParentTable("Operator")]
+			public IRow Operator;
+			[MaxLength(255)]
+			public string Wzorzec = "";
+
+			public override Record Clone() {
+				WydrukWiadomosciRecord rec = (WydrukWiadomosciRecord)MemberwiseClone();
+				return rec;
+			}
+
+			public override void Load(RowCreator creator, int delta) {
+				System.Diagnostics.Debug.Assert(delta==0);
+				Guid = creator.Load_guid(1);
+				Definicja = creator.Load_Row(2, "DefDokHandlowych");
+				Operator = creator.Load_Row(3, "Operators");
+				Wzorzec = creator.Load_string(4);
+			}
+		}
+
+		public static class WydrukWiadomosciSchema {
+
+			internal static RowDelegate<WydrukWiadomosciRow, string> WzorzecBeforeEdit;
+			public static void AddWzorzecBeforeEdit(RowDelegate<WydrukWiadomosciRow, string> value) {
+				WzorzecBeforeEdit = (RowDelegate<WydrukWiadomosciRow, string>)Delegate.Combine(WzorzecBeforeEdit, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> WzorzecAfterEdit;
+			public static void AddWzorzecAfterEdit(RowDelegate<WydrukWiadomosciRow> value) {
+				WzorzecAfterEdit = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(WzorzecAfterEdit, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> OnLoaded;
+			public static void AddOnLoaded(RowDelegate<WydrukWiadomosciRow> value) {
+				OnLoaded = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnLoaded, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> OnAdded;
+			public static void AddOnAdded(RowDelegate<WydrukWiadomosciRow> value) {
+				OnAdded = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnAdded, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> OnEditing;
+			public static void AddOnEditing(RowDelegate<WydrukWiadomosciRow> value) {
+				OnEditing = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnEditing, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> OnDeleting;
+			public static void AddOnDeleting(RowDelegate<WydrukWiadomosciRow> value) {
+				OnDeleting = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnDeleting, value);
+			}
+
+			internal static RowDelegate<WydrukWiadomosciRow> OnDeleted;
+			public static void AddOnDeleted(RowDelegate<WydrukWiadomosciRow> value) {
+				OnDeleted = (RowDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnDeleted, value);
+			}
+
+			internal static RowAccessRightsDelegate<WydrukWiadomosciRow> OnCalcObjectRight;
+			public static void AddOnCalcObjectRight(RowAccessRightsDelegate<WydrukWiadomosciRow> value) {
+				OnCalcObjectRight = (RowAccessRightsDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnCalcObjectRight, value);
+			}
+
+			internal static RowAccessRightsDelegate<WydrukWiadomosciRow> OnCalcParentsObjectRight;
+			public static void AddOnCalcParentsObjectRight(RowAccessRightsDelegate<WydrukWiadomosciRow> value) {
+				OnCalcParentsObjectRight = (RowAccessRightsDelegate<WydrukWiadomosciRow>)Delegate.Combine(OnCalcParentsObjectRight, value);
 			}
 
 		}
