@@ -11,7 +11,7 @@ using Soneta.Commands;
 using System.IO;
 using Soneta.Tools;
 using Soneta.Business.Db;
-
+using Soneta.Zadania;
 
 [assembly: Worker(
     typeof(WyslijDokumentWorker),
@@ -70,6 +70,15 @@ namespace Soneta.Examples.PocztaExt.WiadomosciExt
                 t.CommitUI();
             }
             return wr;
+        }
+
+        public bool IsVisibleWyslijDokument()
+        {
+            Soneta.Zadania.Config.UstawieniaOperatora uo = ZadaniaModule.GetInstance(cx).Config.Operatorzy[cx.Login.Operator];
+            if (uo.DomyslneKontoPocztowe != null)
+                return true;
+
+            return false;
         }
       
 
