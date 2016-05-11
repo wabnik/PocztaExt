@@ -116,7 +116,7 @@
     <Content Include="Generator\Windykacja.business.xml" />
     <Content Include="Generator\Workflow.business.xml" />
     <Content Include="Generator\Zadania.business.xml" />
-    <Content Include="PocztaExt.dbinit.xml" />
+    <EmbeddedResource Include="PocztaExt.dbinit.xml" />
     <Content Include="Soneta.Generator.exe" />
     <Content Include="Version2.convert.sql" />
     <EmbeddedResource Include="WiadomosciExtUI\WiadomosciEmail.Dokumenty.pageform.xml">
