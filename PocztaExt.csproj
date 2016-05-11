@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>c:\Program Files\Common Files\Soneta\Assemblies\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files %28x86%29\Common Files\Soneta\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -69,6 +69,10 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WiadomosciExt\DodajWiadomoscWorker.cs" />
+    <Compile Include="WiadomosciExt\DokumentyWiadomosciParams.cs" />
+    <Compile Include="WiadomosciExt\DokumentyWiadomosciViewInfo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WiadomosciExt\DokumentyWiadomosciWorker.cs" />
     <Compile Include="WiadomosciExt\PrzeliczanieDniHelper.cs" />
     <Compile Include="WiadomosciExt\WiadomoscExt.cs" />
@@ -116,6 +120,7 @@
     <Content Include="Generator\Windykacja.business.xml" />
     <Content Include="Generator\Workflow.business.xml" />
     <Content Include="Generator\Zadania.business.xml" />
+    <EmbeddedResource Include="WiadomosciExtUI\DokumentyWiadomosci.viewform.xml" />
     <EmbeddedResource Include="PocztaExt.dbinit.xml" />
     <Content Include="Soneta.Generator.exe" />
     <Content Include="Version2.convert.sql" />

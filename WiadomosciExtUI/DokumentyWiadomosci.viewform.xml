@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DataForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.enova.pl/schema/form.xsd">
+  <Flow Name="FilterPanel">
+    <Field CaptionHtml="Definicja" Width="15" EditValue="{DokumentyWiadomosciParams.Definicja}" />
+  </Flow>
+  <Grid Name="List" OrderBy="Data" SumType="Selected">
+    <Appearance Condition="{?[Bufor] = True}" ForeColor="#008000" />
+    <Field CaptionHtml="Zatwierdzony" Width="5" EditValue="{Zatwierdzony}" Footer="None" />
+    <Field CaptionHtml="Korekta" Width="5" EditValue="{Korekta}" Footer="None" />
+    <Field CaptionHtml="Numer" Width="15" EditValue="{Numer.Pelny}" Footer="None" />
+    <Field CaptionHtml="Data" Width="10" EditValue="{Data}" Footer="None" />
+    <Field CaptionHtml="Data operacji" Width="11" EditValue="{DataOperacji}" Footer="None" />
+    <Field CaptionHtml="Kontrahent" Width="20" EditValue="{Kontrahent}" Footer="None" />
+    <Field CaptionHtml="Netto" Width="12" EditValue="{Suma.Netto}" Footer="Sum" />
+    <Field CaptionHtml="VAT" Width="12" EditValue="{Suma.VAT}" Footer="Sum" />
+    <Field CaptionHtml="Wartość/B" Width="13" EditValue="{BruttoCy}" Footer="Sum" />
+  </Grid>
+</DataForm>
